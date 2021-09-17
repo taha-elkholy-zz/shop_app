@@ -10,14 +10,26 @@ class CashHelper {
     _preferences = await SharedPreferences.getInstance();
   }
 
-// this method for set th boolean data to the shared preferences object
-  static Future<bool> setBoolean(
-      {required String key, required bool value}) async {
-    return await _preferences.setBool(key, value);
+// this method for get any data type from the shared preferences object
+  static dynamic getData({required String key}) {
+    return _preferences.get(key);
   }
 
-// this method for get the boolean data from the shared preferences object
-  static bool? getBoolean({required String key}) {
-    return _preferences.getBool(key);
+  // method for set all data type on shared preferences object
+  static Future<bool> saveData({
+    required String key,
+    required dynamic value,
+  }) async {
+    if (value is String) return await _preferences.setString(key, value);
+    if (value is int) return await _preferences.setInt(key, value);
+    if (value is bool) return await _preferences.setBool(key, value);
+    return await _preferences.setDouble(key, value);
+  }
+
+  // Remove any object data from shared preferences
+  static Future<bool> removeData({
+    required String key,
+  }) async {
+    return await _preferences.remove(key);
   }
 }

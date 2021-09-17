@@ -54,6 +54,9 @@ dependencies:
   # page indicator
   smooth_page_indicator: ^1.0.0+2
 
+  # Flutter Toast
+  fluttertoast: ^8.0.8
+
 
 
 dev_dependencies:

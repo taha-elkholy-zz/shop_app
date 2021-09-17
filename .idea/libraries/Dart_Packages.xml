@@ -128,6 +128,13 @@
             </list>
           </value>
         </entry>
+        <entry key="fluttertoast">
+          <value>
+            <list>
+              <option value="$PROJECT_DIR$/../../Sdk/flutter/.pub-cache/hosted/pub.dartlang.org/fluttertoast-8.0.8/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="hexcolor">
           <value>
             <list>
@@ -377,6 +384,7 @@
       <root url="file://$PROJECT_DIR$/../../Sdk/flutter/.pub-cache/hosted/pub.dartlang.org/file-6.1.2/lib" />
       <root url="file://$PROJECT_DIR$/../../Sdk/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_bloc-7.2.0/lib" />
       <root url="file://$PROJECT_DIR$/../../Sdk/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_lints-1.0.4/lib" />
+      <root url="file://$PROJECT_DIR$/../../Sdk/flutter/.pub-cache/hosted/pub.dartlang.org/fluttertoast-8.0.8/lib" />
       <root url="file://$PROJECT_DIR$/../../Sdk/flutter/.pub-cache/hosted/pub.dartlang.org/hexcolor-2.0.5/lib" />
       <root url="file://$PROJECT_DIR$/../../Sdk/flutter/.pub-cache/hosted/pub.dartlang.org/http_parser-4.0.0/lib" />
       <root url="file://$PROJECT_DIR$/../../Sdk/flutter/.pub-cache/hosted/pub.dartlang.org/js-0.6.3/lib" />

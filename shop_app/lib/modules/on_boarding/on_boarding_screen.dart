@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shop_app/modules/login_screen/login_screen.dart';
+import 'package:shop_app/modules/login/login_screen.dart';
 import 'package:shop_app/shared/components/components.dart';
 import 'package:shop_app/shared/cubit/shop_cubit.dart';
 import 'package:shop_app/shared/cubit/shop_states.dart';
+import 'package:shop_app/shared/network/local/cash_helper.dart';
 import 'package:shop_app/shared/styles/colors.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -43,6 +44,17 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   var _isLast = false;
 
+  void submit() {
+    CashHelper.saveData(key: 'onBoarding', value: true).then((value) {
+      if (value) {
+        navigateAndFinish(
+          context,
+          LoginScreen(),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ShopCubit, ShopStates>(
@@ -51,11 +63,10 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
         return Scaffold(
           appBar: AppBar(
             actions: [
-              TextButton(
-                  onPressed: () {
-                    navigateAndFinish(context, const LoginScreen());
-                  },
-                  child: const Text('SKIP'))
+              defaultTextButton(
+                text: 'skip',
+                function: submit,
+              )
             ],
           ),
           body: Padding(
@@ -102,7 +113,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                     FloatingActionButton(
                       onPressed: () {
                         if (_isLast) {
-                          navigateAndFinish(context, const LoginScreen());
+                          submit();
                         } else {
                           boardController.nextPage(
                               duration: const Duration(milliseconds: 750),

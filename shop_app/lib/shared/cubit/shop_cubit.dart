@@ -24,7 +24,7 @@ class ShopCubit extends Cubit<ShopStates> {
       // her we just toggle between the 2 possibles
       isDark = !isDark;
       // save isDark value in shared preferences after edit the new value
-      CashHelper.setBoolean(key: 'isDark', value: isDark).then((value) {
+      CashHelper.saveData(key: 'isDark', value: isDark).then((value) {
         emit(ShopChangeModeState());
       });
     } else {
