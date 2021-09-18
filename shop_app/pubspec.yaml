@@ -57,6 +57,9 @@ dependencies:
   # Flutter Toast
   fluttertoast: ^8.0.8
 
+  # infinite slid
+  carousel_slider: ^4.0.0
+
 
 
 dev_dependencies:

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shop_app/modules/login/login_cubit/login_cubit.dart';
 import 'package:shop_app/modules/login/login_screen.dart';
 import 'package:shop_app/shared/bloc_observer.dart';
+import 'package:shop_app/shared/components/constants.dart';
 import 'package:shop_app/shared/cubit/shop_cubit.dart';
 import 'package:shop_app/shared/cubit/shop_states.dart';
 import 'package:shop_app/shared/network/local/cash_helper.dart';
@@ -29,11 +31,11 @@ void main() async {
   bool? _onBoarding = CashHelper.getData(key: 'onBoarding');
 
   // if user login before go to home directly
-  String? _token = CashHelper.getData(key: 'token');
+  token = CashHelper.getData(key: 'token');
 
   if (_onBoarding != null) {
-    if (_token != null) {
-      home = const Home();
+    if (token != '') {
+      home = ShopLayout();
     } else {
       home = LoginScreen();
     }
@@ -62,14 +64,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-        // use MultiBlocProvider if we have more than one cubit in the same app
+      // use MultiBlocProvider if we have more than one cubit in the same app
+        // provide all Cubits here and consume them any where
         providers: [
           BlocProvider(
             create: (BuildContext context) => ShopCubit()
               // here we call changeAppMode when the app starts
               // isDark will be null in first time open
-              ..changeAppMode(fromShared: isDark),
+              ..changeAppMode(fromShared: isDark)
+              // get home data when the app run
+              ..getHomeData(),
           ),
+          BlocProvider(create: (BuildContext context) => LoginCubit()),
         ],
         child: BlocConsumer<ShopCubit, ShopStates>(
           listener: (context, state) {},

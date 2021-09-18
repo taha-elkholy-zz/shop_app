@@ -1,8 +1,16 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shop_app/models/home_model/home_model.dart';
+import 'package:shop_app/modules/categories/categories_screen.dart';
+import 'package:shop_app/modules/favorites/favorites_screen.dart';
+import 'package:shop_app/modules/products/products_screen.dart';
+import 'package:shop_app/modules/settings/settings_screen.dart';
+import 'package:shop_app/shared/components/constants.dart';
 import 'package:shop_app/shared/cubit/shop_states.dart';
+import 'package:shop_app/shared/network/end_points.dart';
 import 'package:shop_app/shared/network/local/cash_helper.dart';
+import 'package:shop_app/shared/network/remot/dio_helper.dart';
 
 class ShopCubit extends Cubit<ShopStates> {
   // constructor match super with initial state of app
@@ -32,5 +40,44 @@ class ShopCubit extends Cubit<ShopStates> {
       isDark = fromShared;
       emit(ShopChangeModeState());
     }
+  }
+
+  // bottom nav bar index
+  int currentIndex = 0;
+
+  // list of Widgets of bottom nav bar
+  List<Widget> bottomsScreens = [
+    const ProductsScreen(),
+    const CategoriesScreen(),
+    const FavoritesScreen(),
+    const SettingsScreen(),
+  ];
+
+  // control bottom bar nave index here
+  void changeBottomNav(index) {
+    currentIndex = index;
+    emit(ShopChangeBottomNavState());
+  }
+
+  // get home data
+  HomeModel? homeModel;
+
+  void getHomeData() {
+    emit(ShopLoadingHomeDataState());
+    DioHelper.getData(
+      url: HOME,
+      // take token for detect that the user login or out
+      // there are some data depends on this token
+      token: token,
+    ).then((value) {
+      // print('${value.data['status']}');
+      // print('${value.data['data']}');
+      // Map<String, dynamic> json = Map<String, dynamic>.from(value.data);
+      homeModel = HomeModel.fromJson(value.data);
+      emit(ShopSuccessHomeDataState());
+    }).catchError((error) {
+      emit(ShopErrorHomeDataState(error.toString()));
+      print(error.toString());
+    });
   }
 }

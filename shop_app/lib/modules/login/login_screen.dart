@@ -17,136 +17,132 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => LoginCubit(),
-      child: BlocConsumer<LoginCubit, LoginStates>(
-        listener: (context, state) {
-          if (state is LoginSuccessState) {
-            if (state.model.status == true) {
-              showToast(
-                message: '${state.model.message}',
-                state: ToastStates.SUCCESS,
-              );
-              CashHelper.saveData(
-                      key: 'token', value: '${state.model.data!.token}')
-                  .then((value) {
-                navigateAndFinish(context, const Home());
-              });
-            } else {
-              showToast(
-                message: '${state.model.message}',
-                state: ToastStates.ERROR,
-              );
-            }
+    return BlocConsumer<LoginCubit, LoginStates>(
+      listener: (context, state) {
+        if (state is LoginSuccessState) {
+          if (state.model.status == true) {
+            showToast(
+              message: '${state.model.message}',
+              state: ToastStates.SUCCESS,
+            );
+            CashHelper.saveData(
+                    key: 'token', value: '${state.model.data!.token}')
+                .then((value) {
+              navigateAndFinish(context, ShopLayout());
+            });
+          } else {
+            showToast(
+              message: '${state.model.message}',
+              state: ToastStates.ERROR,
+            );
           }
-        },
-        builder: (context, state) {
-          return Scaffold(
-            appBar: AppBar(),
-            body: Center(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'LOGIN',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline4!
-                              .copyWith(color: Colors.black),
-                        ),
-                        Text(
-                          'login now to brows our hot offer',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1!
-                              .copyWith(color: Colors.grey),
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        defaultTextFormField(
-                          controller: _emailController,
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(),
+          body: Center(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'LOGIN',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline4!
+                            .copyWith(color: Colors.black),
+                      ),
+                      Text(
+                        'login now to brows our hot offer',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(color: Colors.grey),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      defaultTextFormField(
+                        controller: _emailController,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'please enter your email address';
+                          }
+                        },
+                        inputType: TextInputType.emailAddress,
+                        label: 'Email Address',
+                        prefix: Icons.email_outlined,
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      defaultTextFormField(
+                          controller: _passwordController,
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return 'please enter your email address';
+                              return 'please enter your password';
                             }
                           },
-                          inputType: TextInputType.emailAddress,
-                          label: 'Email Address',
-                          prefix: Icons.email_outlined,
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        defaultTextFormField(
-                            controller: _passwordController,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'please enter your password';
-                              }
-                            },
-                            onSubmit: (value) {
+                          onSubmit: (value) {
+                            if (formKey.currentState!.validate()) {
+                              LoginCubit.get(context).userLogin(
+                                  email: _emailController.text,
+                                  password: _passwordController.text);
+                            }
+                          },
+                          inputType: TextInputType.visiblePassword,
+                          label: 'Password',
+                          prefix: Icons.lock_open_rounded,
+                          isPassword: LoginCubit.get(context).isPassword,
+                          suffix: LoginCubit.get(context).suffixIcon,
+                          onSuffixPressed: () {
+                            LoginCubit.get(context).changePasswordVisibility();
+                          }),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      ConditionalBuilder(
+                        condition: state is! LoginLoadingState,
+                        builder: (BuildContext context) => defaultButton(
+                            text: 'login',
+                            isUpperCase: true,
+                            function: () {
                               if (formKey.currentState!.validate()) {
                                 LoginCubit.get(context).userLogin(
                                     email: _emailController.text,
                                     password: _passwordController.text);
                               }
-                            },
-                            inputType: TextInputType.visiblePassword,
-                            label: 'Password',
-                            prefix: Icons.lock_open_rounded,
-                            isPassword: LoginCubit.get(context).isPassword,
-                            suffix: LoginCubit.get(context).suffixIcon,
-                            onSuffixPressed: () {
-                              LoginCubit.get(context)
-                                  .changePasswordVisibility();
                             }),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        ConditionalBuilder(
-                          condition: state is! LoginLoadingState,
-                          builder: (BuildContext context) => defaultButton(
-                              text: 'login',
-                              isUpperCase: true,
+                        fallback: (BuildContext context) =>
+                            const Center(child: CircularProgressIndicator()),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Don\'t have account?'),
+                          defaultTextButton(
+                              text: 'register',
                               function: () {
-                                if (formKey.currentState!.validate()) {
-                                  LoginCubit.get(context).userLogin(
-                                      email: _emailController.text,
-                                      password: _passwordController.text);
-                                }
+                                navigateTo(context, const RegisterScreen());
                               }),
-                          fallback: (BuildContext context) =>
-                              const Center(child: CircularProgressIndicator()),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text('Don\'t have account?'),
-                            defaultTextButton(
-                                text: 'register',
-                                function: () {
-                                  navigateTo(context, const RegisterScreen());
-                                }),
-                          ],
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

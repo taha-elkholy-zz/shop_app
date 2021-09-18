@@ -7,23 +7,23 @@ class DioHelper {
   static init() {
     _dio = Dio(
       BaseOptions(
-          baseUrl: 'https://student.valuxapps.com/api/',
-          // const url for the app
-          receiveDataWhenStatusError: true,
-          // set const headers here which will not changes
-          headers: {'Content-Type': 'application/json'}),
+        baseUrl: 'https://student.valuxapps.com/api/',
+        // const url for the app
+        receiveDataWhenStatusError: true,
+      ),
     );
   }
 
   // get data
   static Future<Response> getData({
     required String url,
-    required Map<String, dynamic> query,
-    String lang = 'ar',
+    Map<String, dynamic>? query,
+    String lang = 'en',
     String token = '',
   }) async {
-    // set variable headers here like language (lang)
+    // set headers here
     _dio.options.headers = {
+      'Content-Type': 'application/json',
       'lang': lang,
       'Authorization': token,
     };
@@ -35,11 +35,12 @@ class DioHelper {
     required String url,
     required Map<String, dynamic> data,
     Map<String, dynamic>? query,
-    String lang = 'ar',
+    String lang = 'en',
     String token = '',
   }) async {
-    // set variable headers here like language (lang)
+    // set headers here
     _dio.options.headers = {
+      'Content-Type': 'application/json',
       'lang': lang,
       'Authorization': token,
     };
