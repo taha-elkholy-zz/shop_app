@@ -2,7 +2,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shop_app/models/categories_model/categories_model.dart';
 import 'package:shop_app/models/home_model/home_model.dart';
 import 'package:shop_app/shared/cubit/shop_cubit.dart';
 import 'package:shop_app/shared/cubit/shop_states.dart';
@@ -17,18 +19,23 @@ class ProductsScreen extends StatelessWidget {
       listener: (context, state) {},
       builder: (context, state) {
         return ConditionalBuilder(
-            condition: ShopCubit.get(context).homeModel != null,
-            builder: (context) =>
-                productsBuilder(ShopCubit.get(context).homeModel!),
+            condition: ShopCubit.get(context).homeModel != null &&
+                ShopCubit.get(context).categoriesModel != null,
+            builder: (context) => productsBuilder(
+                ShopCubit.get(context).homeModel!,
+                ShopCubit.get(context).categoriesModel!),
             fallback: (context) =>
                 const Center(child: CircularProgressIndicator()));
       },
     );
   }
 
-  Widget productsBuilder(HomeModel model) => SingleChildScrollView(
+  Widget productsBuilder(
+          HomeModel homeModel, CategoriesModel categoriesModel) =>
+      SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CarouselSlider(
               // model.data.banners is list of banners
@@ -36,7 +43,7 @@ class ProductsScreen extends StatelessWidget {
               // to get each element from banners and get it's image
               // and finally add all image in one list
               // list of images from list of Banners
-              items: model.data.banners
+              items: homeModel.data.banners
                   .map((e) => Image(
                         image: NetworkImage(
                           e.image,
@@ -50,10 +57,10 @@ class ProductsScreen extends StatelessWidget {
                 initialPage: 0,
                 scrollDirection: Axis.horizontal,
                 autoPlay: true,
-                reverse: false,
                 // not to revers order of images
-                viewportFraction: 1.0,
+                reverse: false,
                 // to fill all width of screen
+                viewportFraction: 1.0,
                 enableInfiniteScroll: true,
                 autoPlayCurve: Curves.fastOutSlowIn,
                 autoPlayInterval: const Duration(seconds: 3),
@@ -63,18 +70,64 @@ class ProductsScreen extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Categories',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    height: 100,
+                    child: ListView.separated(
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return buildCategoryItem(
+                              categoriesModel.data!.data[index]);
+                        },
+                        separatorBuilder: (context, index) {
+                          return const SizedBox(
+                            width: 10,
+                          );
+                        },
+                        scrollDirection: Axis.horizontal,
+                        itemCount: categoriesModel.data!.data.length),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Text('New Products',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
             Container(
               color: Colors.grey.shade300,
               child: GridView.count(
                 // childAspectRatio width / height
+                // will not overlap in any screens
+                // just when setup it in first time
                 childAspectRatio: 1 / 1.72,
+                // to make the screen scroll from the
+                // major SingleChildScrollView
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
+
                 crossAxisCount: 2,
                 mainAxisSpacing: 1,
                 crossAxisSpacing: 1,
-                children: List.generate(model.data.products.length,
-                    (index) => buildGridProduct(model.data.products[index])),
+                children: List.generate(
+                  homeModel.data.products.length,
+                  (index) => buildGridProduct(homeModel.data.products[index]),
+                ),
               ),
             ),
           ],
@@ -140,7 +193,6 @@ class ProductsScreen extends StatelessWidget {
                       IconButton(
                         padding: const EdgeInsets.all(0),
                         icon: const Icon(Icons.favorite_outline),
-                        iconSize: 10,
                         onPressed: () {},
                       ),
                     ],
@@ -150,5 +202,28 @@ class ProductsScreen extends StatelessWidget {
             ),
           ],
         ),
+      );
+
+  Widget buildCategoryItem(CategoryData model) => Stack(
+        alignment: AlignmentDirectional.bottomCenter,
+        children: [
+          Image(
+            image: NetworkImage('${model.image}'),
+            width: 100,
+            height: 100,
+            fit: BoxFit.cover,
+          ),
+          Container(
+            color: Colors.black.withOpacity(.8),
+            width: 100,
+            child: Text(model.name!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                )),
+          ),
+        ],
       );
 }

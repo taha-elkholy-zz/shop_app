@@ -18,12 +18,10 @@ class HomeDataModel {
       banners.add(BannerModel.fromJson(element));
     });
 
-    print('banners ${banners.length}');
     // add the value to the list of products
     json['products'].forEach((element) {
       products.add(ProductModel.fromJson(element));
     });
-    print('products ${products.length}');
   }
 }
 
