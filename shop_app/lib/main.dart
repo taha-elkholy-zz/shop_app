@@ -72,9 +72,10 @@ class MyApp extends StatelessWidget {
               // here we call changeAppMode when the app starts
               // isDark will be null in first time open
               ..changeAppMode(fromShared: isDark)
-              // get home data when the app run
+              // get data when the app run
               ..getHomeData()
-              ..getCategoriesData(),
+              ..getCategoriesData()
+              ..getFavoritesData(),
           ),
           BlocProvider(create: (BuildContext context) => LoginCubit()),
         ],
