@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shop_app/modules/login/login_cubit/login_cubit.dart';
 import 'package:shop_app/modules/login/login_screen.dart';
 import 'package:shop_app/shared/bloc_observer.dart';
 import 'package:shop_app/shared/components/constants.dart';
@@ -11,6 +10,7 @@ import 'package:shop_app/shared/network/remot/dio_helper.dart';
 import 'package:shop_app/shared/styles/themes.dart';
 
 import 'layout/shop_layout/shop_layout.dart';
+import 'modules/on_boarding/on_boarding_screen.dart';
 
 void main() async {
   // wait while the async process finish then run the app
@@ -34,11 +34,13 @@ void main() async {
   token = CashHelper.getData(key: 'token');
 
   if (_onBoarding != null) {
-    if (token != '') {
+    if (token != null) {
       home = ShopLayout();
     } else {
       home = LoginScreen();
     }
+  } else {
+    home = const OnBoardingScreen();
   }
 
   // init DioHelper
@@ -67,17 +69,21 @@ class MyApp extends StatelessWidget {
       // use MultiBlocProvider if we have more than one cubit in the same app
         // provide all Cubits here and consume them any where
         providers: [
+          // Shop app cubit provided here
           BlocProvider(
             create: (BuildContext context) => ShopCubit()
               // here we call changeAppMode when the app starts
               // isDark will be null in first time open
               ..changeAppMode(fromShared: isDark)
               // get data when the app run
+              // make sure to call these methods in login & register methods
+              // because if user logged out the token = null
+              // and these method will not get any data here
               ..getHomeData()
               ..getCategoriesData()
-              ..getFavoritesData(),
+              ..getFavoritesData()
+              ..getUserData(),
           ),
-          BlocProvider(create: (BuildContext context) => LoginCubit()),
         ],
         child: BlocConsumer<ShopCubit, ShopStates>(
           listener: (context, state) {},

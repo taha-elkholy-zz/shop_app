@@ -1,7 +1,7 @@
 class FavoritesModel {
-  late bool status;
+  late bool? status;
   late String? message;
-  late FavoriteDataModel data;
+  late FavoriteDataModel? data;
 
   FavoritesModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
@@ -11,23 +11,22 @@ class FavoritesModel {
 }
 
 class FavoriteDataModel {
-  late int currentPage;
+  late int? currentPage;
   List<FavProductData> data = [];
-  late String firstPageUrl;
-  late int from;
-  late int lastPage;
+  late String? firstPageUrl;
+  late int? from;
+  late int? lastPage;
   late String? lastPageUrl;
   late String? nextPageUrl;
   late String? path;
-  late int perPage;
+  late int? perPage;
   late String? prevPageUrl;
-  late int to;
-  late int total;
+  late int? to;
+  late int? total;
 
   FavoriteDataModel.fromJson(Map<String, dynamic> json) {
     currentPage = json['current_page'];
 
-    //data = List.from(json['data']).map((e)=>FavProductData.fromJson(e)).toList();
     json['data'].forEach((element) {
       data.add(FavProductData.fromJson(element));
     });
@@ -46,8 +45,8 @@ class FavoriteDataModel {
 }
 
 class FavProductData {
-  late int id;
-  late Product product;
+  late int? id;
+  late Product? product;
 
   FavProductData.fromJson(Map<String, dynamic> json) {
     id = json['id'];

@@ -55,7 +55,7 @@ Widget defaultButton({
   bool isUpperCase = true,
   double radius = 5.0,
   required String text,
-  required Function()? function,
+  required Function()? onPressed,
 }) =>
     Container(
       width: width,
@@ -71,7 +71,7 @@ Widget defaultButton({
             color: Colors.white,
           ),
         ),
-        onPressed: function,
+        onPressed: onPressed,
       ),
     );
 

@@ -9,7 +9,7 @@ class LoginChangePasswordVisibilityState extends LoginStates {}
 class LoginLoadingState extends LoginStates {}
 
 class LoginSuccessState extends LoginStates {
-  LoginModel model;
+  final LoginModel model;
 
   LoginSuccessState(this.model);
 }

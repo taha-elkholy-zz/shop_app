@@ -16,19 +16,27 @@ class FavoritesScreen extends StatelessWidget {
       listener: (context, state) {},
       builder: (context, state) {
         return ConditionalBuilder(
-            condition: state is! ShopLoadingGetFavoritesState,
-            builder: (context) => ListView.separated(
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) => buildFavItem(
-                      context,
-                      ShopCubit.get(context)
-                          .getFavoritesModel!
-                          .data
-                          .data[index],
-                    ),
-                separatorBuilder: (context, index) => myDivider(),
-                itemCount:
-                    ShopCubit.get(context).getFavoritesModel!.data.data.length),
+            condition: ShopCubit.get(context).getFavoritesModel != null,
+            builder: (context) =>
+                (ShopCubit.get(context).getFavoritesModel!.data!.data.isEmpty)
+                    ? const Center(
+                        child: Text('No Favorites, add more'),
+                      )
+                    : ListView.separated(
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (context, index) => buildFavItem(
+                              context,
+                              ShopCubit.get(context)
+                                  .getFavoritesModel!
+                                  .data!
+                                  .data[index],
+                            ),
+                        separatorBuilder: (context, index) => myDivider(),
+                        itemCount: ShopCubit.get(context)
+                            .getFavoritesModel!
+                            .data!
+                            .data
+                            .length),
             fallback: (context) =>
                 const Center(child: CircularProgressIndicator()));
       },
@@ -44,11 +52,11 @@ class FavoritesScreen extends StatelessWidget {
               alignment: AlignmentDirectional.bottomStart,
               children: [
                 Image(
-                  image: NetworkImage(model.product.image!),
+                  image: NetworkImage(model.product!.image!),
                   width: 125,
                   height: 125,
                 ),
-                if (model.product.discount != 0)
+                if (model.product!.discount != 0)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     color: Colors.red,
@@ -67,7 +75,7 @@ class FavoritesScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    model.product.name!,
+                    model.product!.name!,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -79,15 +87,15 @@ class FavoritesScreen extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '${model.product.price}',
+                        '${model.product!.price}',
                         style: TextStyle(fontSize: 12, color: defaultColor),
                       ),
                       const SizedBox(
                         width: 5,
                       ),
-                      if (model.product.discount != 0)
+                      if (model.product!.discount != 0)
                         Text(
-                          '${model.product.oldPrice}',
+                          '${model.product!.oldPrice}',
                           style: const TextStyle(
                               fontSize: 10,
                               color: Colors.grey,
@@ -98,7 +106,7 @@ class FavoritesScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(0),
                         icon: CircleAvatar(
                           backgroundColor: ShopCubit.get(context)
-                                  .inFavorites[model.product.id]!
+                                  .inFavorites[model.product!.id]!
                               ? defaultColor
                               : Colors.grey,
                           radius: 15,
@@ -111,7 +119,7 @@ class FavoritesScreen extends StatelessWidget {
                         onPressed: () {
                           // do same thing here also
                           ShopCubit.get(context)
-                              .changeFavorites(model.product.id!);
+                              .changeFavorites(model.product!.id!);
                         },
                       ),
                     ],
